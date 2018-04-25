@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const multer = require('multer');
 const NEON = require('@cityofzion/neon-js');
+const PastebinAPI = require('pastebin-js');
 const config = require('../../config');
 const utils = require('../../helpers/utils');
 
@@ -9,7 +10,7 @@ const upload = multer({ dest: 'upload' });
 const app = express();
 
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(upload.single('file')); // 'file' - same value as at attr 'name' of an input
+app.use(upload.single('file'));
 
 const addStorage = async (req, res, next) => {
     const privateKey = req.body.key.trim() || config.defaultPrivateKey;
@@ -21,7 +22,7 @@ const addStorage = async (req, res, next) => {
 
     const account = new NEON.wallet.Account(privateKey);
     const fileName = uploadedFile.originalname.replace('.html', '');
-    const key = `${fileName}_dt_${Date.now()}`; //name of exploit + timestamp
+    const key = `${fileName}_dt_${Date.now()}`;
     const fileContent = await utils.readFileContent(uploadedFile.path)
         .then(data => {
             utils.removeFile(uploadedFile.path)
@@ -31,53 +32,67 @@ const addStorage = async (req, res, next) => {
         })
         .catch(err => res.json(utils.showError(`Error reading file content: ${err}`)));
 
-    //get our balnce (needed for transaction)
-    NEON.api.neonDB.getBalance('http://165.227.175.170:5000', account.address)
-        .then(balance => {
-            // create or intents (someone got a link for a good explanation?)
-            const intents = [{
-                assetId: NEON.CONST.ASSET_ID.GAS,
-                value: new NEON.u.Fixed8(1),  // I gueesed this :)
-                scriptHash: config.smartContract.scriptHash
-            }];
+    const encryptedContent = await utils.encryptContent(fileContent);
+    const pastebin = new PastebinAPI(config.pastebin.apiKey);
+    let pastebinUrl = '';
 
-            const invoke = {
-                scriptHash: config.smartContract.scriptHash,
-                operation: 'addStorageRequest',
-                args: [
-                    NEON.sc.ContractParam.string(key),
-                    NEON.sc.ContractParam.string(fileContent)
-                ]
-            };
-
-            // create a script from our parameters
-            const sb = new NEON.sc.ScriptBuilder();
-            sb.emitAppCall(invoke.scriptHash, invoke.operation, invoke.args, false);
-            const script = sb.str;
-
-            // create a transaction object
-            const unsignedTx = NEON.tx.Transaction.createInvocationTx(balance, intents, script, 3, { version: 1 });
-
-            // sing the transaction object (we write something to the blockchain!)
-            const signedTx = NEON.tx.signTransaction(unsignedTx, account.privateKey);
-
-            // convert the transaction to hx so we can send it in an query
-            const hexTx = NEON.tx.serializeTransaction(signedTx);
-
-            // send the transaction to our net
-            NEON.rpc.queryRPC('http://165.227.175.170:30333', {
-                method: 'sendrawtransaction',
-                params: [hexTx],
-                id: 1
-            })
-            .then(data => { 
-                res.json({ message: 'Added successfully!', key: key }); 
-            })
-            .catch(err => { res.json(utils.showError(err.message)); });
+    await pastebin.createPaste(encryptedContent, key, null, 0, '1D')
+        .then((data) => {
+            pastebinUrl = data;
         })
-        .catch(err => {
-            res.json(utils.showError(err.message));
-        });
+        .catch(err => console.log(err));
+
+    if (pastebinUrl) {
+        // get our balnce (needed for transaction)
+        NEON.api.neonDB.getBalance('http://165.227.175.170:5000', account.address)
+            .then(balance => {
+                // create or intents (someone got a link for a good explanation?)
+                const intents = [{
+                    assetId: NEON.CONST.ASSET_ID.GAS,
+                    value: new NEON.u.Fixed8(1),  // I gueesed this :)
+                    scriptHash: config.smartContract.scriptHash
+                }];
+
+                const invoke = {
+                    scriptHash: config.smartContract.scriptHash,
+                    operation: 'addStorageRequest',
+                    args: [
+                        NEON.sc.ContractParam.string(key),
+                        NEON.sc.ContractParam.string(pastebinUrl)
+                    ]
+                };
+
+                // create a script from our parameters
+                const sb = new NEON.sc.ScriptBuilder();
+                sb.emitAppCall(invoke.scriptHash, invoke.operation, invoke.args, false);
+                const script = sb.str;
+
+                // create a transaction object
+                const unsignedTx = NEON.tx.Transaction.createInvocationTx(balance, intents, script, 0, { version: 1 });
+
+                // sing the transaction object (we write something to the blockchain!)
+                const signedTx = NEON.tx.signTransaction(unsignedTx, account.privateKey);
+
+                // convert the transaction to hx so we can send it in an query
+                const hexTx = NEON.tx.serializeTransaction(signedTx);
+
+                // send the transaction to our net
+                NEON.rpc.queryRPC('http://165.227.175.170:30333', {
+                    method: 'sendrawtransaction',
+                    params: [hexTx],
+                    id: 1
+                })
+                    .then(data => {
+                        res.json({ message: 'Added successfully!', key: key });
+                    })
+                    .catch(err => { res.json(utils.showError(err.message)); });
+            })
+            .catch(err => {
+                res.json(utils.showError(err.message));
+            });
+    } else {
+        res.json(utils.showError('Occured an error'));
+    }
 };
 
 const getPending = (req, res) => {
