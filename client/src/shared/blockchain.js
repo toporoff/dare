@@ -2,7 +2,7 @@ import neon from '@cityofzion/neon-js';
 import axios from 'axios';
 
 import config from '../config';
-import * as util from '../shared/util';
+import * as util from './util';
 
 const Neon = neon.default;
 

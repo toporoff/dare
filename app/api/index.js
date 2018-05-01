@@ -12,17 +12,28 @@ const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(upload.single('file'));
 
-const addStorage = async (req, res, next) => {
+const addStorage = async (req, res) => {
     const privateKey = req.body.key.trim() || config.defaultPrivateKey;
     const uploadedFile = req.file;
+    const netAddress = `${req.protocol}://${config.netAddress}`;
 
     if (!uploadedFile || uploadedFile.mimetype !== 'text/html') {
         return res.json(utils.showError('Missing file or file format is not correct'));
     }
 
-    const account = new NEON.wallet.Account(privateKey);
-    const fileName = uploadedFile.originalname.replace('.html', '');
-    const key = `${fileName}_dt_${Date.now()}`;
+    const account = new NEON.wallet.Account(privateKey);    
+    const sourceAddress = account.address;
+
+    let intents = NEON.api.makeIntent({GAS: "0.00000001"}, config.winNodePublicKey);
+    let neonConfig = {
+        net: `${netAddress}:5000`,
+        address: sourceAddress,
+        privateKey: privateKey,
+        intents: intents
+    };
+
+    const txRes = await NEON.api.sendAsset(neonConfig);
+    const key = txRes.tx.hash;
     const fileContent = await utils.readFileContent(uploadedFile.path)
         .then(data => {
             utils.removeFile(uploadedFile.path)
@@ -33,28 +44,29 @@ const addStorage = async (req, res, next) => {
         .catch(err => res.json(utils.showError(`Error reading file content: ${err}`)));
 
     const encryptedContent = await utils.encryptContent(fileContent);
-    const pastebin = new PastebinAPI(config.pastebin.apiKey);
+    const pastebin = new PastebinAPI(config.pastebinApiKey);
     let pastebinUrl = '';
 
     await pastebin.createPaste(encryptedContent, key, null, 0, '1D')
         .then((data) => {
             pastebinUrl = data;
         })
-        .catch(err => console.log(err));
+        .catch(err => utils.showError(err));
+
+    //Sleep because of block updates 30sec    
+    await utils.sleep(30000);
 
     if (pastebinUrl) {
-        // get our balnce (needed for transaction)
-        NEON.api.neonDB.getBalance('http://165.227.175.170:5000', account.address)
+        NEON.api.neonDB.getBalance(`${netAddress}:5000`, account.address)
             .then(balance => {
-                // create or intents (someone got a link for a good explanation?)
-                const intents = [{
+                intents = [{
                     assetId: NEON.CONST.ASSET_ID.GAS,
-                    value: new NEON.u.Fixed8(1),  // I gueesed this :)
-                    scriptHash: config.smartContract.scriptHash
+                    value: new NEON.u.Fixed8("0.00000001"),
+                    scriptHash: config.smartContractScriptHash
                 }];
 
                 const invoke = {
-                    scriptHash: config.smartContract.scriptHash,
+                    scriptHash: config.smartContractScriptHash,
                     operation: 'addStorageRequest',
                     args: [
                         NEON.sc.ContractParam.string(key),
@@ -62,22 +74,15 @@ const addStorage = async (req, res, next) => {
                     ]
                 };
 
-                // create a script from our parameters
                 const sb = new NEON.sc.ScriptBuilder();
                 sb.emitAppCall(invoke.scriptHash, invoke.operation, invoke.args, false);
+
                 const script = sb.str;
-
-                // create a transaction object
                 const unsignedTx = NEON.tx.Transaction.createInvocationTx(balance, intents, script, 0, { version: 1 });
-
-                // sing the transaction object (we write something to the blockchain!)
                 const signedTx = NEON.tx.signTransaction(unsignedTx, account.privateKey);
-
-                // convert the transaction to hx so we can send it in an query
                 const hexTx = NEON.tx.serializeTransaction(signedTx);
 
-                // send the transaction to our net
-                NEON.rpc.queryRPC('http://165.227.175.170:30333', {
+                NEON.rpc.queryRPC(`${netAddress}:30333`, {
                     method: 'sendrawtransaction',
                     params: [hexTx],
                     id: 1
@@ -85,7 +90,9 @@ const addStorage = async (req, res, next) => {
                     .then(data => {
                         res.json({ message: 'Added successfully!', key: key });
                     })
-                    .catch(err => { res.json(utils.showError(err.message)); });
+                    .catch(err => { 
+                        res.json(utils.showError(err.message)); 
+                    });
             })
             .catch(err => {
                 res.json(utils.showError(err.message));
@@ -97,8 +104,9 @@ const addStorage = async (req, res, next) => {
 
 const getPending = (req, res) => {
     const key = req.params.key;
+    const netAddress = `${req.protocol}://${config.netAddress}`;
     const props = NEON.sc.scriptParams = {
-        scriptHash: config.smartContract.scriptHash,
+        scriptHash: config.smartContractScriptHash,
         operation: 'getPendingRequest',
         args: [
             NEON.sc.ContractParam.string(key),
@@ -108,15 +116,12 @@ const getPending = (req, res) => {
 
     const vmScript = NEON.sc.createScript(props);
 
-    // invoke the script
     NEON.rpc.Query.invokeScript(vmScript)
-        .execute('http://165.227.175.170:30333')
+        .execute(`${netAddress}:30333`)
         .then(response => {
             let result = "Not found";
 
-            if (response.result.state === "HALT, BREAK" && !!response.result.stack["0"]) {// "HALT, BREAK" means it was ok (source?)
-                // if we stacked the parameters correctly we get the result on postion 0
-                // if you e.g. provided to many input paramters they get returned to you and are on pos 0, 1, ...
+            if (response.result.state === "HALT, BREAK" && !!response.result.stack["0"]) {
                 const hexValue = response.result.stack["0"].value;
 
                 result = '';

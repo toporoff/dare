@@ -21,7 +21,7 @@ export const arr2hex = args => {
     let hexArgs = [];
 
     args.forEach(arg => {
-        hexArgs.push(module.exports.str2hex(arg))
+        hexArgs.push(str2hex(arg));
     });
 
     return hexArgs;

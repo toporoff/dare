@@ -1,7 +1,7 @@
 const utils = module.exports;
 
 const fs = require('fs');
-const AES = require('crypto-js/aes');
+const CryptoJS = require('crypto-js');
 const config = require('../config');
 
 utils.readFileContent = filePath => new Promise((resolve, reject) => {
@@ -25,8 +25,8 @@ utils.removeFile = filePath => new Promise((resolve, reject) => {
 });
 
 utils.encryptContent = content => new Promise((resolve, reject) => {
-    const encrypted = AES.encrypt(content, config.encrypt.key).toString();
-    resolve(encrypted); 
+    const encrypted = CryptoJS.RC4.encrypt(content, config.encryptKey).toString();
+    resolve(encrypted);
 });
 
 utils.showError = message => {
@@ -35,3 +35,5 @@ utils.showError = message => {
         message: message
     }
 };
+
+utils.sleep = async ms => new Promise(resolve => setTimeout(resolve, ms));
