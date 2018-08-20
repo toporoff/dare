@@ -1,0 +1,815 @@
+/*** Import fonts ***/
+@font-face {
+    font-family: "GothamMedium";
+    src: url("../fonts/GothamMedium.ttf");
+}
+
+@font-face {
+    font-family: "GothamLight";
+    src: url("../fonts/GothamLight.otf");
+}
+
+@font-face {
+    font-family: "GothamBook";
+    src: url("../fonts/GothamBook.otf");
+}
+
+@font-face {
+    font-family: "MontserratRegular";
+    src: url("../fonts/Montserrat-Regular.ttf");
+}
+
+@font-face {
+    font-family: "MontserratMedium";
+    src: url("../fonts/Montserrat-Medium.ttf");
+}
+
+/*** Common styles ***/
+body {
+    background-color: #0b164f;
+    background-image:   radial-gradient(circle at 28vw 34vh, rgba(6, 58, 166, 1), transparent 55%),
+                        radial-gradient(circle at 2vw 383vh, rgba(6, 58, 166, 1), transparent 40%),
+                        radial-gradient(circle at 93vw 637vh, rgba(6, 58, 166, 1), transparent 35%), 
+                        radial-gradient(circle at 4vw 900vh, rgba(6, 58, 166, 1), transparent 40%);
+    color: #FFF;
+    font-family: "GothamLight", sans-serif;
+    position: relative;
+}
+
+@media (max-width: 991.98px) {
+    body {
+        background-image:   radial-gradient(circle at 28vw 34vh, rgba(6, 58, 166, 1), transparent 55%),
+                            radial-gradient(circle at 2vw 383vh, rgba(6, 58, 166, 1), transparent 40%),
+                            radial-gradient(circle at 93vw 637vh, rgba(6, 58, 166, 1), transparent 35%), 
+                            radial-gradient(circle at 4vw 900vh, rgba(6, 58, 166, 1), transparent 40%), 
+                            radial-gradient(circle at 90vw 1372vh, rgba(6, 58, 166, 1), transparent 35%);
+    }
+}
+
+a, a:visited {
+    color: #FFF;
+}
+
+a:hover {
+    color: #00f0ff;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: "GothamMedium", sans-serif;
+}
+
+input, textarea, button {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.btn {
+    border-radius: 2rem;
+    box-shadow: none !important;
+    font-family: "GothamMedium";
+    font-size: 0.8rem;
+    padding: 0.875rem 1.75rem;
+    text-transform: uppercase;
+    outline: none !important;
+}
+
+.btn.btn-primary, 
+.btn.btn-primary:hover,
+.btn.btn-primary:not(:disabled):not(.disabled):active {
+    background-color: #304ffe;
+    border-color: #304ffe;
+    color: #FFF;
+}
+
+.btn.btn-default, .btn.btn-default:hover {
+    background-color: transparent;
+    border-color: #304ffe;
+    color: #00f0ff;
+}
+
+.upper {
+    text-transform: uppercase;
+}
+
+.shadowed-box {
+    background-color: #070379;
+    box-shadow: 0 0 30px 0 rgba(0,0,0,0.4);
+    text-align: center;
+    padding: 1.8rem;
+}
+
+.dashed {
+    border-top: 1px dashed #2966fe;
+    display: block;
+    margin: 0.5rem 0;
+}
+
+.dashed.w90 {
+    width: 90%;
+}
+
+.dashed.w75 {
+    width: 75%;
+}
+
+.color-block {
+    display: inline-block;
+    margin-right: 1rem;
+    height: 1.3rem;
+    width: 1.3rem;
+}
+
+.color-block.first {
+    background-color: #1d38fe;
+}
+
+.color-block.second {
+    background-color: #0b20e7;
+}
+
+.color-block.third {
+    background-color: #020d83;
+}
+
+.color-block.fourth {
+    background-color: #0719b8;
+}
+
+
+.members-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.members-list .member-card {
+    flex: 0 0 19%;
+    text-align: center;
+}
+
+.members-list .member-card:not(:first-of-type) {
+    margin-left: -.3rem;
+}
+
+.members-list .member-card.big {
+    flex: 0 0 24%;
+}
+
+.members-list .member-card .photo {
+    height: 17.1rem;
+}
+
+.members-list .member-card.big .photo {
+    margin-bottom: 1.8rem;
+}
+
+.members-list .member-card .photo img {
+    border: .3rem solid #00f0ff;
+    width: 100%;
+}
+
+.members-list .member-card .name {
+    color: #00f0ff;
+    font-family: "MontserratMedium";
+}
+
+.members-list .member-card .role {
+    color: #87c2ff;
+    font-family: "MontserratRegular";
+}
+
+.members-list .member-card .social a {
+    color: #00f0ff;
+    display: inline-block;
+    margin: 0 .5rem;
+}
+
+.accordion .card {
+    border: none;
+    border-radius: 0;
+    margin-bottom: 1.5rem;
+}
+
+.accordion .card-body,
+.accordion .card-header {
+    background-color: #304ffe;
+    border-radius: 0;
+    padding: 1.25rem;
+}
+
+.accordion .card-header {
+    border-bottom: 1px solid #1934ce;
+    cursor: pointer;
+    position: relative;
+}
+
+.accordion .card-header:after {
+    background: url("../img/angle-down.png") no-repeat center center;
+    background-color: #1934ce;
+    content: " ";
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: calc(100% + 1px);
+    width: 3.5rem;
+}
+
+.accordion .card-header.collapsed:after {
+    background: url("../img/angle-right.png") no-repeat center center;
+    background-color: #1934ce;
+}
+
+.accordion .card-header .btn {
+    background-color: transparent;
+    border-radius: 0;
+    color: #FFF;
+    font-size: 1.05rem;
+    padding: 0;
+}
+
+.accordion .card-body {
+    font-family: "GothamBook";
+    font-size: 0.95rem;
+}
+
+/*** Top block section ***/
+#top-block .main-nav .nav-link {
+    font-size: 0.9rem;
+    font-weight: normal;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+#top-block .main-nav .nav-link:last-of-type {
+    padding-right: 0;
+}
+
+@media (max-width: 991.98px) {
+    #top-block .main-nav .nav-link {
+        text-align: center;
+    }
+}
+
+#top-block .main-nav .navbar-toggler {
+    font-size: 2rem;
+    color: #FFF;
+}
+
+#top-block .main-nav .navbar-toggler:hover {
+    color: #00f0ff;
+}
+
+#top-block .main-info-wrap {
+    padding: 7.5rem 0;
+}
+
+@media (max-width: 991.98px) {
+    #top-block .main-info-wrap > .row {
+        flex-flow: column-reverse;
+        text-align: center;
+    }
+}
+
+#top-block .main-info-wrap .main-info-img {
+    text-align: center;
+}
+
+#top-block .main-info-wrap .main-info-img img {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+}
+
+@media (min-width: 992px) and (max-width: 1199.98px) {
+    #top-block .main-info-wrap .main-info-img img {
+        height: auto;
+        width: 100%;
+    }
+}
+
+@media (max-width: 991.98px) {
+    #top-block .main-info-wrap .main-info-img img {
+        position: relative;
+        height: auto;
+        width: 60%;
+    }
+}
+
+#top-block .main-info-wrap .main-info h1 {
+    font-size: 4rem;
+    padding-bottom: 2.2rem;
+    line-height: 5.5rem;
+}
+
+#top-block .main-info-wrap .main-info p {
+    font-size: 1.8rem;
+}
+
+#top-block .main-info-wrap .main-info .buttons-wrap {
+    margin-top: 3.3rem;
+}
+
+#top-block .main-info-wrap .main-info .buttons-wrap .btn {    
+    width: 10.5rem;
+}
+
+#top-block .main-info-wrap .main-info .buttons-wrap .btn:not(:first-of-type) {
+    margin-left: 2rem;
+}
+
+#top-block .top-subscribe-wrap {
+    padding: 2.5rem 0;
+}
+
+@media (max-width: 991.98px) {
+    #top-block .top-subscribe-wrap {
+        text-align: center;
+    }
+}
+
+#top-block .subscribe-info h3,
+#top-block .subscribe-info p {
+    color: #304ffe;
+}
+
+#top-block .subscribe-info h3 {
+    font-size: 1.9rem;
+    margin-bottom: 1.7rem;
+}
+
+#top-block .subscribe-info p {
+    font-family: "GothamBook";
+    font-size: 1.1rem;
+    line-height: 2rem;
+}
+
+#top-block .subscribe-form .input-group {
+    padding-left: 3rem;
+}
+
+@media (max-width: 991.98px) {
+    #top-block .subscribe-form .input-group {
+        padding-left: 0;
+    }
+}
+
+#top-block .subscribe-form input {
+    background-color: #304ffe;
+    border-color: #304ffe;
+    border-top-left-radius: 2rem;
+    border-bottom-left-radius: 2rem;
+    color: #FFF;
+    font-size: 0.9rem;
+    padding: 1.2rem 1.6rem;
+}
+
+#top-block .subscribe-form input::-webkit-input-placeholder {
+    color: #8698ff !important;
+    font-family: "GothamBook" !important;
+}
+
+#top-block .subscribe-form input::-moz-placeholder {
+    color: #8698ff !important;
+    font-family: "GothamBook" !important;
+}
+
+#top-block .subscribe-form input:-ms-input-placeholder {
+    color: #8698ff !important;
+    font-family: "GothamBook" !important;
+}
+
+#top-block .subscribe-form input:-moz-placeholder {
+    color: #8698ff !important;
+    font-family: "GothamBook" !important;
+}
+
+#top-block .subscribe-form .btn {
+    background-color: #061ddd;
+    border-color: #061ddd;
+    font-size: 1.1rem;
+    text-transform: none;
+}
+
+#top-block .subscribe-form .btn:active {
+    background-color: #061ddd;
+    border-color: #061ddd;
+}
+
+#top-block .logos-wrap {
+    padding: 2rem 0;
+}
+
+#top-block .logos-wrap .logo-wrap {
+    height: 5rem;
+    margin: 1rem 0;
+    text-align: center;
+}
+
+#top-block .logos-wrap .logo-wrap img {
+    max-width: 100%;
+}
+
+/*** Token sale section ***/
+#token-sale {
+    padding: 15rem 0 10rem;
+}
+
+@media (max-width: 991.98px) {
+    #token-sale {
+        padding: 5rem 0 10rem;
+    }
+}
+
+#token-sale .token-sale-info .h2 {
+    font-size: 2.25rem;
+    margin-bottom: 1.6rem;
+}
+
+#token-sale .token-sale-info p {
+    font-size: 1.1rem;
+    line-height: 2rem;
+}
+
+#token-sale .token-sale-info p:last-of-type {
+    font-size: 0.9rem;
+    line-height: 1.9rem;
+}
+
+#token-sale .token-sale-info .shadowed-box > p {
+    font-family: "GothamBook";
+}
+
+#token-sale .token-sale-info .shadowed-box .btn,
+#token-sale .token-sale-info .shadowed-box .btn:hover,
+#token-sale .token-sale-info .shadowed-box .btn:active {
+    background-color: #061ddd;
+    border-color: #061ddd;
+    font-size: 0.95rem;
+    padding: 1.2rem 6.3rem;
+    margin: 1rem 0 0.3rem;
+}
+
+#token-sale .token-sale-info .countdown-wrap p {
+    font-family: "GothamBook";
+    font-size: 0.9rem;
+    line-height: 2rem;
+    padding: 1rem 0 0.5rem;
+}
+
+#token-sale .token-sale-info .countdown-wrap p:not(:last-of-type) {
+    border-right: 1px solid #566dff;
+}
+
+#token-sale .token-sale-info .countdown-wrap p span {
+    font-family: "GothamMedium";
+    font-size: 2.4rem;
+    display: block;
+    margin-bottom: 1rem;
+}
+
+@media (max-width: 991.98px) {
+    #token-sale .token-sale-info {
+        margin-bottom: 3rem;
+    }
+}
+
+#token-sale .investment-info .shadowed-box {
+    color: #2966fe;
+    font-family: "GothamBook";
+    padding: 3rem 0 0.5rem;
+}
+
+#token-sale .investment-info .shadowed-box h3 {
+    color: #FFF;
+    font-size: 1.9rem;
+    margin-bottom: 1.1rem;
+}
+
+#token-sale .investment-info .shadowed-box p {
+    font-size: 1.1rem;
+}
+
+#token-sale .investment-info .shadowed-box .analytics-wrap {
+    text-align: left;
+    margin-top: 2rem;
+}
+
+#token-sale .investment-info .shadowed-box .analytics-wrap .row {
+    align-items: center;
+    font-size: 1.5rem;
+    margin-bottom: 0.8rem;
+}
+
+#token-sale .investment-info .shadowed-box .analytics-wrap .row div:first-of-type {
+    padding-left: 5rem;
+    font-size: 1.05rem;
+}
+
+#token-sale .investment-info .shadowed-box .analytics-wrap h1 {
+    font-family: "GothamBook";
+    padding: 0.8rem 0;
+}
+
+/*** What is ICO section ***/
+#what-is-ico {
+    padding: 1rem 0;
+}
+
+#what-is-ico img {
+    width: 100%;
+}
+
+#what-is-ico .content {
+    padding: 0 1.5rem;
+}
+
+@media (max-width: 991.98px) {
+    #what-is-ico .content {
+        margin-top: 2rem;
+    }
+}
+
+#what-is-ico .content h2 {
+    font-size: 2.3rem;
+    margin-bottom: 1.8rem;
+}
+
+#what-is-ico .content p {
+    font-family: "GothamLight";
+    line-height: 1.7rem;
+}
+
+/*** How-it-work section ***/
+#how-it-work {
+    padding: 1rem 0;
+    margin: 7rem 0;
+}
+
+#how-it-work img {
+    width: 100%;
+}
+
+#how-it-work .content {
+    padding: 0 1.5rem;
+}
+
+#how-it-work .content h2 {
+    font-size: 2.3rem;
+    margin-bottom: 1.8rem;
+}
+
+#how-it-work .content p {
+    font-family: "GothamLight";
+    line-height: 1.7rem;
+}
+
+/*** Token-distribution section ***/
+#token-distribution {
+    padding: 1rem 0;
+    margin: 7rem 0;
+}
+
+@media (max-width: 991.98px) {
+    #token-distribution > .row {
+        flex-flow: column-reverse;
+    }
+}
+
+#token-distribution img {
+    width: 100%;
+}
+
+#token-distribution .content {
+    padding: 0 1.5rem;
+}
+
+#token-distribution .content h2 {
+    font-size: 2.3rem;
+    margin-bottom: 1.8rem;
+}
+
+#token-distribution .content p {
+    font-family: "GothamLight";
+    line-height: 1.7rem;
+}
+
+/*** Sale Proceed Allocation ***/
+#sale-proceed-allocation img {
+    width: 100%;
+}
+
+/*** Roadmap ***/
+#roadmap {
+    padding: 1rem 0;
+    margin: 7rem 0;
+    text-align: center;
+}
+
+#roadmap h2 {
+    font-size: 2.3rem;
+    margin-bottom: 1.8rem;
+}
+
+#roadmap p {
+    font-family: "GothamLight";
+    font-size: 1.2rem;
+    line-height: 1.7rem;
+}
+
+#roadmap .roadmap-points-wrap .roadmap-points {
+    background: url("../img/roadmap-marks.png") no-repeat center top;
+}
+
+#roadmap .roadmap-points-wrap h5,
+#roadmap .roadmap-points-wrap p {
+    font-family: "GothamBook";
+}
+
+#roadmap .roadmap-points-wrap h5 {
+    font-size: 1.2rem;
+}
+
+#roadmap .roadmap-points-wrap p {
+    font-size: 1rem;
+}
+
+#roadmap .roadmap-points-wrap .left-col {
+    text-align: right;
+}
+
+#roadmap .roadmap-points-wrap .right-col {
+    text-align: left;
+}
+
+@media (min-width: 1200px) {
+    #roadmap .roadmap-points-wrap .right-col {
+        margin-left: -4rem;
+    }
+
+    #roadmap .roadmap-points-wrap .left-col {
+        margin-right: -4rem;
+    }
+}
+
+#roadmap .roadmap-points-wrap .left-col .point {
+    padding: 5rem 0 8.6rem;
+}
+
+#roadmap .roadmap-points-wrap .right-col .point {
+    padding: 10.5rem 0 2.5rem;
+}
+
+/*** Our team ***/
+#our-team {
+    margin: 7rem 0;
+}
+
+/*** Our advisors ***/
+#our-advisors {
+    margin: 7rem 0;
+}
+
+/*** Contact ***/
+#contact {
+    margin: 7rem 0;
+}
+
+#contact .contact-methods {
+    justify-content: space-between;
+    margin: 3rem 0;
+}
+
+#contact .contact-methods .icon-wrap {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+#contact .contact-methods .icon-wrap img {
+    height: 1.85rem;
+}
+
+#contact .contact-methods a,
+#contact .contact-methods a:hover {
+    color: #00f0ff;
+}
+
+@media (max-width: 991.98px) {
+    #contact .contact-methods > div:not(:last-of-type) {
+        margin-bottom: 2rem;
+    }
+}
+
+#contact .contact-form input,
+#contact .contact-form textarea {
+    background-color: transparent;
+    border: 0;
+    border-bottom: 1px solid #00f0ff;
+    color: #FFF;
+    font-family: "MontserratRegular";
+    font-size: 0.8rem;
+    padding: 1rem 0;
+    margin-bottom: 3rem;
+    width: 100%;
+}
+
+#contact .contact-form textarea {
+    resize: none;
+    height: 10rem;
+}
+
+#contact .contact-form input::-webkit-input-placeholder {
+    text-transform: uppercase !important;
+    color: #a7faff !important;
+}
+#contact .contact-form input::-moz-placeholder {
+    text-transform: uppercase !important;
+    color: #a7faff !important;
+}
+#contact .contact-form input:-ms-input-placeholder {
+    text-transform: uppercase !important;
+    color: #a7faff !important;
+}
+#contact .contact-form input:-moz-placeholder {
+    text-transform: uppercase !important;
+    color: #a7faff !important;
+}
+#contact .contact-form textarea::-webkit-input-placeholder {
+    text-transform: uppercase !important;
+    color: #a7faff !important;
+}
+#contact .contact-form textarea::-moz-placeholder {
+    text-transform: uppercase !important;
+    color: #a7faff !important;
+}
+#contact .contact-form textarea:-ms-input-placeholder {
+    text-transform: uppercase !important;
+    color: #a7faff !important;
+}
+#contact .contact-form textarea:-moz-placeholder {
+    text-transform: uppercase !important;
+    color: #a7faff !important;
+}
+
+/*** Footer ***/
+#footer {
+    padding: 5rem 0;
+}
+
+#footer .footer-subscribe-form .input-group {
+    border-radius: 2rem;
+    border: 3px solid #2009e4;
+    padding: 0;
+}
+
+#footer .footer-subscribe-form .input-group .form-control {
+    background-color: #032872; 
+    border-radius: 2rem;
+    border-width: 0;
+    font-family: "GothamBook";
+    color: #FFF;
+    padding: 1.1rem 12.7rem 1.1rem 1.7rem;
+}
+
+#footer .footer-subscribe-form .input-group .form-control:focus {
+    z-index: inherit;
+}
+
+#footer .footer-subscribe-form .input-group .form-control::-webkit-input-placeholder {
+    color: #FFF !important;
+}
+
+#footer .footer-subscribe-form .input-group .form-control::-moz-placeholder {
+    color: #FFF !important;
+}
+
+#footer .footer-subscribe-form .input-group .form-control:-ms-input-placeholder {
+    color: #FFF !important;
+}
+
+#footer .footer-subscribe-form .input-group .form-control:-moz-placeholder {
+    color: #FFF !important;
+}
+
+#footer .footer-subscribe-form .input-group .btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 1.18rem 3.4rem;
+    z-index: 1;
+}
+
+footer {
+    background-color: #304ffe;
+    font-family: "GothamBook";
+    padding: 2rem 0 1rem;
+}
+
+footer a:hover {
+    text-decoration: none;
+}
+
+footer .fab {
+    font-size: 1.5rem;
+    margin-left: 1.5rem;
+}
