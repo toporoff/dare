@@ -9,6 +9,7 @@ const utils = require('../../helpers/utils');
 const upload = multer({ dest: 'upload' });
 const app = express();
 
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(upload.single('file'));
 
@@ -135,7 +136,19 @@ const getPending = (req, res) => {
         .catch(error => { res.json({ error: true, message: error.message }); });
 };
 
+const decryptContent = async (req, res) => {
+    const content = req.body.content;
+    let result = 'error';
+
+    try {
+        result = await utils.decryptContent(content);
+    } catch (e) {}
+
+    res.status(200).send(result);
+};
+
 app.post('/add-storage', addStorage);
+app.post('/decrypt', decryptContent);
 app.get('/get-pending/:key', getPending);
 
 module.exports = app;

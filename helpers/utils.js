@@ -24,9 +24,14 @@ utils.removeFile = filePath => new Promise((resolve, reject) => {
     });
 });
 
-utils.encryptContent = content => new Promise((resolve, reject) => {
+utils.encryptContent = content => new Promise(resolve => {
     const encrypted = CryptoJS.RC4.encrypt(content, config.encryptKey).toString();
     resolve(encrypted);
+});
+
+utils.decryptContent = content => new Promise(resolve => {
+    const decrypted = CryptoJS.RC4.decrypt(content, config.encryptKey);
+    resolve(CryptoJS.enc.Utf8.stringify(decrypted));
 });
 
 utils.showError = message => {
